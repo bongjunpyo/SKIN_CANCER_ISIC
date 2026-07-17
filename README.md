@@ -29,21 +29,26 @@ EfficientNet 앞에 `Rescaling`을 추가하면 이중 스케일링으로 성능
 
 ## 결과
 
+전체 노트북을 위→아래로 재실행한 실측치 (TF 2.21, CPU, 약 26분).
+
 | 모델 | best val accuracy | Test accuracy |
 |---|---|---|
-| 베이스라인 CNN | ≈ 0.54 (최종 epoch 0.49~0.54 진동) | — |
-| EfficientNetB0 (동결) | ≈ 0.62 | — |
-| EfficientNetB0 (fine-tuned) | Colab 재실행 후 기입 | Colab 재실행 후 기입 |
+| 베이스라인 CNN | 0.557 | — |
+| EfficientNetB0 (동결) | 0.615 | — |
+| **EfficientNetB0 (fine-tuned)** | **0.647 (+3.1%p)** | **0.542** |
 
-> fine-tuning·Test 평가 셀은 추가 완료 상태이며, 수치는 Colab에서 노트북을 위→아래로 재실행해 채운다.
+Test 셋(118장) 클래스별 요약: vascular lesion F1 1.00, dermatofibroma F1 0.72로 강하고,
+**actinic keratosis(recall 0.19)·melanoma(recall 0.25)·seborrheic keratosis(support 3, F1 0.00)**가 약하다.
+val(0.647)→test(0.542) 하락은 test 셋이 작고 클래스 분포가 달라서로 보인다. 상세 혼동행렬은 노트북 참조.
 
 ## 실행
 
-Colab에서 `Skin_Cancer_ISIC.ipynb`를 열고 GPU 런타임으로 전체 실행 (위→아래 순서 실행 보장).
+Colab(GPU 권장) 또는 로컬에서 `Skin_Cancer_ISIC.ipynb`를 위→아래로 전체 실행.
+공개 데이터셋이라 kagglehub 인증 불필요.
 
 ## 한계
 
-- Test 118장 — 클래스별 지표의 신뢰구간이 넓음
-- 클래스 불균형 미보정 (class_weight 미적용)
+- Test 118장 — 클래스별 지표의 신뢰구간이 넓음 (seborrheic keratosis는 3장뿐)
+- 클래스 불균형 미보정 (class_weight 미적용) — melanoma 등 임상적으로 중요한 클래스의 recall이 낮음
 - 데이터 증강 미적용 — `RandomFlip/RandomRotation/RandomZoom`을 train 파이프라인에만 추가하는 것이 다음 단계
 - 단일 시드·단일 분할 결과
